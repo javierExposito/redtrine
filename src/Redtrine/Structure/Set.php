@@ -8,7 +8,6 @@ use IteratorAggregate,
 
 class Set extends Base implements IteratorAggregate, Countable
 {
-
     /**
      * Add an element to the set.
      *
@@ -16,7 +15,7 @@ class Set extends Base implements IteratorAggregate, Countable
      */
     public function add($element)
     {
-        $this->client->add($this->key, $element);
+        $this->client->sadd($this->key, $element);
     }
 
     /**
@@ -37,7 +36,18 @@ class Set extends Base implements IteratorAggregate, Countable
      */
     public function exists($element)
     {
-        return $this->client->sismember($element);
+        return $this->client->sismember($this->key, $element);
+    }
+
+    /**
+     * Check whether an element exists in the set.
+     *
+     * @param $element
+     * @return boolean
+     */
+    public function contains($element)
+    {
+        return $this->exists($element);
     }
 
     /**
@@ -70,10 +80,14 @@ class Set extends Base implements IteratorAggregate, Countable
         return $this->length();
     }
 
+    public function removeAll()
+    {
+        $this->client->del($this->key);
+    }
+
     public function getIterator()
     {
         return new ArrayIterator($this->elements());
     }
-
 
 }
