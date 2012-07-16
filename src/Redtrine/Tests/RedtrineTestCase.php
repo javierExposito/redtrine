@@ -7,6 +7,9 @@ use Predis\Client as Redis;
 
 class RedtrineTestCase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Redtrine
+     */
     protected $redtrine;
 
     protected $redis;
@@ -19,5 +22,10 @@ class RedtrineTestCase extends \PHPUnit_Framework_TestCase
 
         $this->redtrine = new Redtrine();
         $this->redtrine->setClient($this->redis);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->redis);
     }
 }

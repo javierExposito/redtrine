@@ -13,4 +13,10 @@ class RedtrineTest extends RedtrineTestCase
     {
         $this->assertNotNull($this->redtrine->getClient());
     }
+
+    public function testCreate()
+    {
+        $set = $this->redtrine->create('Set', 'theNameOfTheSet');
+        $this->assertInstanceOf('Redtrine\Structure\Set', $set);
+    }
 }
