@@ -5,19 +5,18 @@ namespace Redtrine\Structure;
 /**
  * Common base structure.
  */
-class Base
+abstract class Base
 {
-    protected $namespace;
-
     protected $name;
 
     protected $key;
 
     protected $client;
 
-    public function __construct()
+    public function __construct($name)
     {
-        $this->key = $this->namespace . ':' . $this->name;
+        $this->setName($name);
+        $this->key = $this->name;
     }
 
     public function setName($name)
@@ -28,16 +27,6 @@ class Base
     public function getName()
     {
         return $this->name;
-    }
-
-    public function setNamespace($namespace)
-    {
-        $this->namespace = $namespace;
-    }
-
-    public function getNamespace()
-    {
-        return $this->namespace;
     }
 
     public function getKeys()
@@ -53,6 +42,4 @@ class Base
     {
         return $this->client;
     }
-
-
 }

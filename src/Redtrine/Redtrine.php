@@ -23,4 +23,18 @@ class Redtrine
         return $this->client;
     }
 
+    public function create($structure, $name)
+    {
+        $class = 'Redtrine\\Structure\\' . $structure;
+
+        if (class_exists($class)) {
+            $obj = new $class($name);
+            $obj->setClient($this->client);
+
+            return $obj;
+
+        } else {
+            throw new \InvalidArgumentException(sprintf('Impossible to create structure %s, class %s not found.', $structure, $class));
+        }
+    }
 }
