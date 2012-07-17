@@ -9,55 +9,88 @@ use IteratorAggregate,
 class SortedSet extends Base implements IteratorAggregate, Countable
 {
     /**
-     * Add an element to the set.
-     *
-     * @param $element
+     * Adds the specified members with the specified scores to the sorted set.
+     * @see http://redis.io/commands/zadd
      */
-    public function add($element, $score = 0)
+    public function add($member, $score = 0)
     {
-        $this->client->zadd($this->key, $score, $element);
+        $this->client->zadd($this->key, $score, $member);
     }
 
     /**
-     * Remove an element from the set.
-     *
-     * @param $element
+     * Remove a member from the sorted set.
+     * @see http://redis.io/commands/zrem
      */
-    public function remove($element)
+    public function remove($member)
     {
-        $this->client->zrem($this->key, $element);
+        $this->client->zrem($this->key, $member);
     }
 
     /**
-     * Check whether an element exists in the set.
-     *
-     * @param $element
-     * @return boolean
+     * Check whether a mmeber exists in the set.
+     * @see http://redis.io/commands/zscore
      */
-    public function exists($element)
+    public function exists($member)
     {
-        return null !== $this->client->zscore($this->key, $element);
+        return null !== $this->client->zscore($this->key, $member);
     }
 
     /**
-     * Check whether an element exists in the set.
-     *
-     * @param $element
-     * @return boolean
+     * Check whether a member exists in the set.
      */
-    public function contains($element)
+    public function contains($member)
     {
-        return $this->exists($element);
+        return $this->exists($member);
     }
 
     /**
      * Get an array of elements stored in the set.
-     *
-     * @return mixed
      */
     public function elements()
     {
         return $this->client->zrange($this->key, 0, -1);
+    }
+
+    /**
+     * Returns the rank of the member in the sorted set, with the
+     * scores ordered from low to high. The rank (or index) is 0-based,
+     * which means that the member with the lowest score has rank 0.
+     *
+     * @see http://redis.io/commands/zrank
+     */
+    public function rank($member)
+    {
+        return $this->client->zrank($this->key, $member);
+    }
+
+    /**
+     * Returns the score of the member in the sorted set.
+     *
+     * @see http://redis.io/commands/zscore
+     */
+    public function score($member)
+    {
+        return $this->client->zscore($this->key, $member);
+    }
+
+    public function range($start = 0, $stop = -1)
+    {
+        return $this->client->zrange($this->key, $start, $stop);
+    }
+
+    public function rangeWithScores($start = 0, $stop = -1)
+    {
+        return $this->normalizeScores($this->client->zrange($this->key, $start, $stop, 'WITHSCORES'));
+    }
+
+    public function reverseRange($start = 0, $stop = -1)
+    {
+        return $this->client->zrevrange($this->key, $start, $stop);
+    }
+
+    public function reverseRangeWithScores($start = 0, $stop = -1)
+    {
+        return $this->normalizeScores($this->client->zrevrange($this->key, $start, $stop, 'WITHSCORES'));
     }
 
     /**
@@ -80,6 +113,15 @@ class SortedSet extends Base implements IteratorAggregate, Countable
         return $this->length();
     }
 
+    /**
+     * Returns the number of elements in the sorted set with a score between min and max.
+     * @see http://redis.io/commands/zcount
+     */
+    public function countScoreBetween($min = '-inf', $max = '+inf')
+    {
+        return $this->client->scount($this->key, $min, $max);
+    }
+
     public function removeAll()
     {
         $this->client->del($this->key);
@@ -87,36 +129,48 @@ class SortedSet extends Base implements IteratorAggregate, Countable
 
     public function getIterator()
     {
-        return new ArrayIterator($this->elements());
+        return new ArrayIterator($this->rangeWithScores());
+    }
+
+    public function highestScores($count = 1)
+    {
+        return $this->reverseRangeWithScores(0 , $count - 1);
+    }
+
+    public function highestScore()
+    {
+        $h = $this->highestScores(1);
+        return array(key($h), current($h));
+    }
+
+    public function lowestScores($count = 1)
+    {
+        return $this->rangeWithScores(0, $count - 1);
+    }
+
+    public function lowestScore()
+    {
+        $l = $this->lowestScores(1);
+        return array(key($l), current($l));
     }
 
     /**
-     *
-     * Returns the rank of the element in the sorted set, with the
-     * scores ordered from low to high. The rank (or index) is 0-based,
-     * which means that the member with the lowest score has rank 0.
-     *
-     * @param $element
-     * @return mixed
-     *
-     * @see http://redis.io/commands/zrank
+     * Increments the score of member in the sorted set stored by increment.
+     * @see http://redis.io/commands/zincrby
      */
-    public function rank($element)
+    public function increment($increment, $member)
     {
-        return $this->client->zrank($this->key, $element);
+        return $this->client->incrby($this->key, $increment, $member);
     }
 
-    /**
-     * Returns the score of the element in the sorted set.
-     *
-     * @param $element
-     * @return mixed
-     *
-     * @see http://redis.io/commands/zscore
-     */
-    public function score($element)
+    protected function normalizeScores($results)
     {
-        return $this->client->zscore($this->key, $element);
-    }
+        $range = array();
+        foreach ($results as $result) {
+            list ($member, $score) = $result;
+            $range[$member] = $score;
+        }
 
+        return $range;
+    }
 }

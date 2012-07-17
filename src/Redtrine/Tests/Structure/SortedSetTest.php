@@ -79,22 +79,6 @@ class SortedSetTest extends RedtrineTestCase
         return $elements;
     }
 
-    public function testLenght()
-    {
-        $this->assertEquals(0, $this->set->length());
-        $elements = $this->testElements();
-
-        $this->assertEquals(count($elements), $this->set->length());
-    }
-
-    public function testIterator()
-    {
-        $elements = $this->testElements();
-        foreach ($this->set as $element) {
-            $this->assertContains($element, $elements);
-        }
-    }
-
     public function testRank()
     {
         $elements = $this->getRandomElementsWithScores();
@@ -122,6 +106,67 @@ class SortedSetTest extends RedtrineTestCase
         $this->assertEquals($score, $this->set->score($element));
     }
 
+    public function testRange()
+    {
+        $elements = $this->populateSortedSet();
+        $this->assertEquals($this->set->length(), count($elements));
+
+        $range = $this->set->range(0, -1);
+        $this->assertEquals(count($elements), count($range));
+
+        $range = $this->set->range(0, 4);
+        $this->assertEquals(5, count($range));
+    }
+
+    public function testRangeWithScores()
+    {
+        $elements = $this->populateSortedSet();
+        $this->assertEquals($this->set->length(), count($elements));
+
+        $range = $this->set->rangeWithScores(0, -1);
+        $this->assertEquals(count($elements), count($range));
+
+        $range = $this->set->rangeWithScores(0, 4);
+        $this->assertEquals(5, count($range));
+    }
+
+    public function testLenght()
+    {
+        $this->assertEquals(0, $this->set->length());
+        $elements = $this->testElements();
+
+        $this->assertEquals(count($elements), $this->set->length());
+    }
+
+    public function testIterator()
+    {
+        $this->populateSortedSet();
+        $pos = 0;
+        foreach ($this->set as $member => $score) {
+            $this->assertTrue($this->set->contains($member));
+            $this->assertEquals($this->set->score($member), $score);
+            $this->assertEquals($pos, $this->set->rank($member));
+            $pos++;
+        }
+        $this->assertEquals($this->set->length(), $pos);
+    }
+
+    public function testHighestScore()
+    {
+        $this->populateSortedSet();
+        list($member, $score) = $this->set->highestScore();
+        $this->assertEquals($this->set->length() - 1, $this->set->rank($member));
+        $this->assertEquals($this->set->score($member), $score);
+    }
+
+    public function testLowestScore()
+    {
+        $this->populateSortedSet();
+        list($member, $score) = $this->set->lowestScore();
+        $this->assertEquals(0, $this->set->rank($member));
+        $this->assertEquals($this->set->score($member), $score);
+    }
+
     public function getElementsWithScore()
     {
         $result = array();
@@ -145,4 +190,14 @@ class SortedSetTest extends RedtrineTestCase
         return $result;
     }
 
+    protected function populateSortedSet()
+    {
+        $elements = $this->getRandomElementsWithScores();
+
+        foreach ($elements as $element => $score) {
+            $this->set->add($element, $score);
+        }
+
+        return $elements;
+    }
 }
