@@ -137,4 +137,14 @@ class Rlist extends Base implements IteratorAggregate, Countable
         $this->trim(0, $length - 1);
     }
 
+    public function head()
+    {
+        return $this->elements(0, 0);
+    }
+
+    public function tail()
+    {
+        return $this->elements(-1, -1);
+    }
+
 }
