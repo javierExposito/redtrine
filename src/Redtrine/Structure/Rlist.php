@@ -28,7 +28,7 @@ class Rlist extends Base implements IteratorAggregate, Countable
      */
     public function insertBefore($pivot, $value)
     {
-        $this->client->insert($this->key, 'BEFORE', $pivot, $value);
+        return $this->client->linsert($this->key, 'BEFORE', $pivot, $value);
     }
 
     /**
@@ -36,7 +36,7 @@ class Rlist extends Base implements IteratorAggregate, Countable
      */
     public function insertAfter($pivot, $value)
     {
-        $this->client->insert($this->key, 'AFTER', $pivot, $value);
+        return $this->client->linsert($this->key, 'AFTER', $pivot, $value);
     }
 
     /**
@@ -44,7 +44,7 @@ class Rlist extends Base implements IteratorAggregate, Countable
      */
     public function set($index, $element)
     {
-        $this->client->lset($this->key, $index, $element);
+        return $this->client->lset($this->key, $index, $element);
     }
 
     /**
@@ -54,7 +54,7 @@ class Rlist extends Base implements IteratorAggregate, Countable
      * starting at the tail of the list. Here, -1 means the last element,
      * -2 means the penultimate and so forth.
      *
-     * @param int $index
+     * @see http://redis.io/commands/lindex
      */
     public function get($index)
     {
@@ -87,7 +87,7 @@ class Rlist extends Base implements IteratorAggregate, Countable
      */
     public function length()
     {
-        return $this->client->scard($this->key);
+        return $this->client->llen($this->key);
     }
 
     /**
@@ -146,5 +146,4 @@ class Rlist extends Base implements IteratorAggregate, Countable
     {
         return $this->elements(-1, -1);
     }
-
 }
