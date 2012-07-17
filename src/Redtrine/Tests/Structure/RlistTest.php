@@ -25,7 +25,7 @@ class RlistTest extends RedtrineTestCase
      */
     public function testLeftPush($value)
     {
-        $this->list->letfPush($value);
+        $this->list->leftPush($value);
         $this->assertEquals($this->list->get(0), $value);
     }
 
@@ -90,7 +90,7 @@ class RlistTest extends RedtrineTestCase
     protected function populateList()
     {
         foreach ($this->getRandomValues() as $value) {
-            $this->list->letfPush($value);
+            $this->list->leftPush($value);
         }
     }
 }

@@ -13,7 +13,7 @@ Countable;
 class Rlist extends Base implements IteratorAggregate, Countable
 {
 
-    public function letfPush($value)
+    public function leftPush($value)
     {
         $this->client->lpush($this->key, $value);
     }
