@@ -8,9 +8,11 @@ class Redtrine
 {
     protected $client;
 
-    public function __construct()
+    public function __construct($client = null)
     {
-
+        if (null !== $client) {
+            $this->client = $client;
+        }
     }
 
     public function setClient(Redis $client)
