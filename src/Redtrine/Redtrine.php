@@ -25,7 +25,15 @@ class Redtrine
 
     public function create($structure, $name)
     {
+        if ('List' == $structure) {
+            $structure = 'Rlist';
+        }
+
         $class = 'Redtrine\\Structure\\' . $structure;
+
+        if (is_array($name)) {
+            $name = implode(':', $name);
+        }
 
         if (class_exists($class)) {
             $obj = new $class($name);

@@ -19,4 +19,15 @@ class RedtrineTest extends RedtrineTestCase
         $set = $this->redtrine->create('Set', 'theNameOfTheSet');
         $this->assertInstanceOf('Redtrine\Structure\Set', $set);
     }
+
+    public function testStructureKeyNaming()
+    {
+        $name = 'theNameOfTheSet';
+        $structure = $this->redtrine->create('Set', $name);
+        $this->assertEquals($name, $structure->getName());
+
+        $name = array('the', 'name', 'of', 'the', 'set');
+        $structure = $this->redtrine->create('Set', $name);
+        $this->assertEquals('the:name:of:the:set', $structure->getName());
+    }
 }
