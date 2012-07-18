@@ -16,6 +16,5 @@
 
     "autoload": {
         "psr-0": { "Redtrine": "src/" }
-    },
-    "target-dir": "Lt/Bundle/RedisBundle"
+    }
 }
