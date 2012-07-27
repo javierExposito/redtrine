@@ -27,6 +27,14 @@ class SetTest extends RedtrineTestCase
     {
         $this->set->add($element);
         $this->assertTrue($this->set->contains($element));
+
+        // Test with an array of elements.
+        $elements = $this->getRandomElements();
+        $this->set->removeAll();
+        $this->set->add($elements);
+
+        $this->assertCount(count($elements), $this->set);
+
     }
 
     /**

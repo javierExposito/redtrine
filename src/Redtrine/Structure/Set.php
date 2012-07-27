@@ -15,7 +15,15 @@ class Set extends Base implements IteratorAggregate, Countable
      */
     public function add($element)
     {
-        $this->client->sadd($this->key, $element);
+        if (is_array($element)) {
+            $this->client->multi();
+            foreach ($element as $item) {
+                $this->client->sadd($this->key, $element);
+            }
+            $this->client->exec();
+        } else {
+            $this->client->sadd($this->key, $element);
+        }
     }
 
     /**
