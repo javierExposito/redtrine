@@ -98,6 +98,11 @@ class Set extends Base implements IteratorAggregate, Countable
         return $this->client->sunion($this->key, $set->getKey());
     }
 
+    public function unionStore($destination, Set $set)
+    {
+        return $this->client->sunionstore($destination, $this->getKey(), $set->getKey());
+    }
+
     public function getIterator()
     {
         return new ArrayIterator($this->elements());
