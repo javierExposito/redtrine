@@ -95,6 +95,17 @@ class SetTest extends RedtrineTestCase
         $this->assertEquals(count($elements), $this->set->length());
     }
 
+    public function testUnion()
+    {
+        $a = $this->redtrine->create('Set', 'setA');
+        $a->add(array(1, 2, 3, 4));
+        $b = $this->redtrine->create('Set', 'setB');
+        $b->add(array(3, 4, 5, 6, 7, 8));
+
+        $this->assertEquals($a->union($b), array(1, 2, 3, 4, 5, 6, 7, 8));
+
+    }
+
     public function testIterator()
     {
         $elements = $this->testElements();

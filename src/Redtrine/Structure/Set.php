@@ -93,6 +93,11 @@ class Set extends Base implements IteratorAggregate, Countable
         $this->client->del($this->key);
     }
 
+    public function union(Set $set)
+    {
+        return $this->client->sunion($this->key, $set->getKey());
+    }
+
     public function getIterator()
     {
         return new ArrayIterator($this->elements());
