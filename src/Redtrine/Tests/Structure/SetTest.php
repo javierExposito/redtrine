@@ -27,6 +27,14 @@ class SetTest extends RedtrineTestCase
     {
         $this->set->add($element);
         $this->assertTrue($this->set->contains($element));
+
+        // Test with an array of elements.
+        $elements = $this->getRandomElements();
+        $this->set->removeAll();
+        $this->set->add($elements);
+
+        $this->assertCount(count($elements), $this->set);
+
     }
 
     /**
@@ -85,6 +93,32 @@ class SetTest extends RedtrineTestCase
         $elements = $this->testElements();
 
         $this->assertEquals(count($elements), $this->set->length());
+    }
+
+    public function testUnion()
+    {
+        $a = $this->redtrine->create('Set', 'setA');
+        $a->add(array(1, 2, 3, 4));
+        $b = $this->redtrine->create('Set', 'setB');
+        $b->add(array(3, 4, 5, 6, 7, 8));
+
+        $this->assertEquals($a->union($b), array(1, 2, 3, 4, 5, 6, 7, 8));
+    }
+
+    public function testUnionStore()
+    {
+        $a = $this->redtrine->create('Set', 'setA');
+        $a->add(array(1, 2, 3, 4));
+        $b = $this->redtrine->create('Set', 'setB');
+        $b->add(array(3, 4, 5, 6, 7, 8));
+
+        $destination = 'setDestination';
+        $total = $a->unionStore($destination, $b);
+        $this->assertEquals(8 , $total);
+
+        $c = $this->redtrine->create('Set', $destination);
+
+        $this->assertEquals($c->elements(), array(1, 2, 3, 4, 5, 6, 7, 8));
     }
 
     public function testIterator()

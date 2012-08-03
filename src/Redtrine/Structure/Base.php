@@ -29,8 +29,9 @@ abstract class Base
         return $this->name;
     }
 
-    public function getKeys()
+    public function getKey()
     {
+        return $this->key;
     }
 
     public function setClient($client)
