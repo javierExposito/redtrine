@@ -2,8 +2,6 @@
 
 namespace Redtrine;
 
-use Predis\Client as Redis;
-
 class Redtrine
 {
     protected $client;
@@ -15,7 +13,7 @@ class Redtrine
         }
     }
 
-    public function setClient(Redis $client)
+    public function setClient($client)
     {
         $this->client = $client;
     }
