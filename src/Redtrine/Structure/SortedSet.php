@@ -160,7 +160,7 @@ class SortedSet extends Base implements IteratorAggregate, Countable
      */
     public function increment($increment, $member)
     {
-        return $this->client->incrby($this->key, $increment, $member);
+        return $this->client->zincrby($this->key, $increment, $member);
     }
 
     protected function normalizeScores($results)

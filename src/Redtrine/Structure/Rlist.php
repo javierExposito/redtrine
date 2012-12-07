@@ -71,7 +71,7 @@ class Rlist extends Base implements IteratorAggregate, Countable
 
     public function rightPop()
     {
-        $this->client->rpop($this, $this->key);
+        $this->client->rpop($this->key);
     }
 
     /**
