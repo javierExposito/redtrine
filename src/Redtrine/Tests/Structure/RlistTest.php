@@ -38,6 +38,28 @@ class RlistTest extends RedtrineTestCase
         $this->assertEquals($this->list->get($this->list->length() - 1), $value);
     }
 
+    public function testRightPop()
+    {
+        $this->populateList();
+
+        do {
+            $previousLengh = $this->list->length();
+            $this->list->rightPop();
+            $this->assertEquals($previousLengh-1, $this->list->length());
+        } while ($this->list->length() > 0);
+    }
+
+    public function testLeftPop()
+    {
+        $this->populateList();
+
+        do {
+            $head = array_shift($this->list->head());
+            $this->list->leftPop();
+            $this->assertNotContains($head, $this->list);
+        } while ($this->list->length() > 0);
+    }
+
     public function testInsertBefore()
     {
         $this->populateList();
