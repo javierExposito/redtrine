@@ -167,6 +167,18 @@ class SortedSetTest extends RedtrineTestCase
         $this->assertEquals($this->set->score($member), $score);
     }
 
+    public function testIncrement()
+    {
+        $this->populateSortedSet();
+
+        foreach($this->set as $member => $score)
+        {
+            $this->set->increment(1, $member);
+            $newScore = $this->set->score($member);
+            $this->assertEquals($newScore, 1 + $score);
+        }
+    }
+
     public function getElementsWithScore()
     {
         $result = array();
